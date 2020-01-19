@@ -14,7 +14,7 @@ public class Repository {
     }
 
     public void analyzeData(RequestDataModel requestDataModel, Callback callback){
-        apiInterface.classifyData(requestDataModel).enqueue(callback);
+        apiInterface.classifyData("Token fb58f47b42a84625a46e8d437ccad5ab2528a5cb","application/json",requestDataModel).enqueue(callback);
     }
 
 

@@ -8,7 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.sentiments.ApiServices.Repository;
+import com.example.sentiments.models.ClassifyExternalModel;
+import com.example.sentiments.models.RequestDataModel;
+import com.example.sentiments.presenters.ClassifyPresenter;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements ClassifyViewAction {
 
     EditText data_et;
     TextView tag_name_tv,confidence_tv;
@@ -39,6 +46,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void analyseData(String data) {
+        ClassifyPresenter presenter = new ClassifyPresenter(MainActivity.this,new Repository(),this);
+        RequestDataModel requestDataModel = new RequestDataModel();
+        requestDataModel.setData(data);
+        presenter.analyzeData(requestDataModel);
+    }
 
+    @Override
+    public void onDataClassified(List<ClassifyExternalModel> classifyExternalModels) {
+        String tagName = classifyExternalModels.get(0).getClassifications().get(0).getTag_name();
+        double confidence = classifyExternalModels.get(0).getClassifications().get(0).getConfidence();
+        tag_name_tv.setText("Tag Name : "+tagName);
+        confidence_tv.setText("Probaiblity : "+confidence*100);
+    }
+
+    @Override
+    public void showLoading() {
+        tag_name_tv.setText("Analyzing Data... Please wait");
+        confidence_tv.setText("");
+    }
+
+    @Override
+    public void showNullResponse() {
+        tag_name_tv.setText("Null response recieved");
+        confidence_tv.setText("");
+    }
+
+    @Override
+    public void onResponseFailure() {
+        tag_name_tv.setText("Response failed");
+        confidence_tv.setText("");
     }
 }
